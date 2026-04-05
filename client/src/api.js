@@ -1,6 +1,7 @@
 import { clearToken, getToken } from './authStorage.js'
 
-const base = '/api'
+const runtimeBase = (import.meta.env.VITE_API_BASE_URL || '').trim()
+const base = runtimeBase ? `${runtimeBase.replace(/\/+$/, '')}/api` : '/api'
 
 async function request(path, options = {}) {
   const token = getToken()
