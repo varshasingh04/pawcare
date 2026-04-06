@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
@@ -8,27 +9,46 @@ export default {
         display: ['Outfit', 'system-ui', 'sans-serif'],
       },
       colors: {
-        brand: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
+        // Primary: Teal
+        primary: {
+          50: '#f0fdfa',
+          100: '#ccfbf1',
+          200: '#99f6e4',
+          300: '#5eead4',
+          400: '#2dd4bf',
+          500: '#14b8a6',
+          600: '#0d9488',
+          700: '#0f766e',
+          800: '#115e59',
+          900: '#134e4a',
         },
-        mint: {
-          50: '#ecfdf5',
-          100: '#d1fae5',
-          200: '#a7f3d0',
-          300: '#6ee7b7',
-          400: '#34d399',
-          500: '#10b981',
+        // Secondary: Cream
+        cream: {
+          50: '#fefce8',
+          100: '#fef9c3',
+          200: '#fef08a',
+          300: '#fde047',
+        },
+        // Text: Charcoal
+        charcoal: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
         },
       },
       boxShadow: {
-        soft: '0 4px 24px -4px rgba(14, 165, 233, 0.12), 0 8px 16px -8px rgba(15, 118, 110, 0.08)',
-        card: '0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(14, 165, 233, 0.08)',
+        soft: '0 4px 24px -4px rgba(20, 184, 166, 0.15), 0 8px 16px -8px rgba(20, 184, 166, 0.1)',
+        card: '0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(20, 184, 166, 0.08)',
+        'glow-primary': '0 0 20px rgba(20, 184, 166, 0.3)',
+        'dark-card': '0 4px 24px rgba(0, 0, 0, 0.4)',
+        'dark-soft': '0 8px 32px rgba(0, 0, 0, 0.5)',
       },
     },
   },

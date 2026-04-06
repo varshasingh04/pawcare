@@ -55,11 +55,11 @@ export function BookAppointment() {
   if (done) {
     return (
       <div className="max-w-md mx-auto text-center py-16 px-4">
-        <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-mint-100 text-emerald-600 mb-6">
+        <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 mb-6">
           <CheckCircle2 className="w-9 h-9" />
         </div>
-        <h1 className="font-display text-2xl font-bold text-slate-900">You&apos;re booked</h1>
-        <p className="mt-2 text-slate-600">
+        <h1 className="font-display text-2xl font-bold text-gray-900 dark:text-white">You&apos;re booked</h1>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
           {fmt(days[selectedDay])} at {selectedSlot}
           {vetHint ? ` with ${vetHint}` : ''}.
         </p>
@@ -77,24 +77,24 @@ export function BookAppointment() {
     <div className="max-w-3xl mx-auto space-y-8">
       <Link
         to="/vets"
-        className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-sky-600"
+        className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-sky-600"
       >
         <ArrowLeft className="w-4 h-4" />
         Vets
       </Link>
 
       <div>
-        <h1 className="font-display text-3xl font-bold text-slate-900 tracking-tight">Book appointment</h1>
-        <p className="mt-2 text-slate-600">
-          Choose a date and time. {vetHint && <span className="font-medium text-slate-800">Suggested: {vetHint}</span>}
+        <h1 className="font-display text-3xl font-bold text-gray-900 tracking-tight">Book appointment</h1>
+        <p className="mt-2 text-gray-700">
+          Choose a date and time. {vetHint && <span className="font-medium text-gray-800">Suggested: {vetHint}</span>}
         </p>
       </div>
 
-      <div className="rounded-3xl bg-white border border-slate-100/90 p-6 sm:p-8 shadow-card space-y-8">
+      <div className="action-card rounded-3xl p-6 sm:p-8 shadow-sm space-y-8">
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <CalendarDays className="w-5 h-5 text-sky-600" />
-            <h2 className="font-display font-bold text-slate-900">Select date</h2>
+            <CalendarDays className="w-5 h-5 text-sky-600 dark:text-sky-400" />
+            <h2 className="font-display font-bold">Select date</h2>
           </div>
           <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
             {days.map((d, i) => (
@@ -105,10 +105,10 @@ export function BookAppointment() {
                   setSelectedDay(i)
                   setSelectedSlot(null)
                 }}
-                className={`shrink-0 rounded-2xl px-4 py-3 min-w-[5.5rem] text-left transition-all border ${
+                className={`date-btn shrink-0 rounded-2xl px-4 py-3 min-w-[5.5rem] text-left transition-all ${
                   selectedDay === i
-                    ? 'bg-sky-500 text-white border-sky-500 shadow-lg shadow-sky-500/20'
-                    : 'bg-slate-50 text-slate-700 border-slate-100 hover:border-sky-200'
+                    ? 'selected'
+                    : ''
                 }`}
               >
                 <p className="text-xs font-medium opacity-80">
@@ -121,17 +121,17 @@ export function BookAppointment() {
         </section>
 
         <section>
-          <h2 className="font-display font-bold text-slate-900 mb-4">Time slots</h2>
+          <h2 className="font-display font-bold mb-4">Time slots</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {SLOTS.map((t) => (
               <button
                 key={t}
                 type="button"
                 onClick={() => setSelectedSlot(t)}
-                className={`rounded-2xl py-3 text-sm font-semibold border transition-all ${
+                className={`time-btn rounded-2xl py-3 text-sm font-semibold transition-all ${
                   selectedSlot === t
-                    ? 'bg-mint-100 border-mint-300 text-emerald-900 ring-2 ring-mint-400/50'
-                    : 'bg-white border-slate-200 text-slate-700 hover:border-sky-200'
+                    ? 'selected'
+                    : ''
                 }`}
               >
                 {t}
@@ -141,7 +141,7 @@ export function BookAppointment() {
         </section>
 
         {err && (
-          <div className="rounded-2xl bg-red-50 text-red-700 text-sm px-4 py-3 border border-red-100">
+          <div className="rounded-2xl bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-sm px-4 py-3 border border-red-200 dark:border-red-800">
             {err}
           </div>
         )}

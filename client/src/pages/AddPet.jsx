@@ -3,7 +3,13 @@ import { useNavigate, Link } from 'react-router-dom'
 import { PawPrint, ArrowLeft } from 'lucide-react'
 import { api } from '../api'
 
-const TYPES = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Other']
+const TYPES = ['Dog', 'Cat', 'Bird']
+const GENDERS = ['male', 'female']
+
+function supportsHeatTracking(petType) {
+  const t = (petType || '').toLowerCase()
+  return t === 'dog' || t === 'cat'
+}
 
 export function AddPet() {
   const navigate = useNavigate()
@@ -13,9 +19,16 @@ export function AddPet() {
     age: '',
     weight: '',
     breed: '',
+    gender: 'male',
+    reproductiveStatus: 'intact',
+    lastHeatDate: '',
   })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
+
+  const showGenderField = supportsHeatTracking(form.type)
+  const showReproductiveStatus = showGenderField && form.gender === 'female'
+  const showHeatDateField = showReproductiveStatus && form.reproductiveStatus === 'intact'
 
   function update(e) {
     const { name, value } = e.target
@@ -27,13 +40,25 @@ export function AddPet() {
     setError(null)
     setSubmitting(true)
     try {
-      const pet = await api.createPet({
+      const payload = {
         name: form.name.trim(),
         type: form.type,
         age: Number(form.age),
         weight: Number(form.weight),
         breed: form.breed.trim() || undefined,
-      })
+      }
+
+      if (showGenderField) {
+        payload.gender = form.gender
+        if (form.gender === 'female') {
+          payload.reproductiveStatus = form.reproductiveStatus
+          if (showHeatDateField && form.lastHeatDate) {
+            payload.lastHeatDate = form.lastHeatDate
+          }
+        }
+      }
+
+      const pet = await api.createPet(payload)
       navigate(`/pets/${pet._id}`, { replace: true, state: { pet } })
       return
     } catch (err) {
@@ -152,6 +177,105 @@ export function AddPet() {
             className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent"
           />
         </div>
+
+        {showGenderField && (
+          <>
+            <div>
+              <label htmlFor="gender" className="block text-sm font-semibold text-slate-700 mb-2">
+                Gender
+              </label>
+              <div className="flex gap-3">
+                {GENDERS.map((g) => (
+                  <label
+                    key={g}
+                    className={[
+                      'flex-1 flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 cursor-pointer transition-all',
+                      form.gender === g
+                        ? 'border-sky-400 bg-sky-50 text-sky-700 ring-2 ring-sky-200'
+                        : 'border-slate-200 bg-slate-50/50 text-slate-700 hover:bg-slate-100',
+                    ].join(' ')}
+                  >
+                    <input
+                      type="radio"
+                      name="gender"
+                      value={g}
+                      checked={form.gender === g}
+                      onChange={update}
+                      className="sr-only"
+                    />
+                    <span className="text-lg">{g === 'male' ? '♂️' : '♀️'}</span>
+                    <span className="capitalize font-medium">{g}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {showReproductiveStatus && (
+              <div>
+                <label htmlFor="reproductiveStatus" className="block text-sm font-semibold text-slate-700 mb-2">
+                  Is she spayed?
+                </label>
+                <div className="flex gap-3">
+                  <label
+                    className={[
+                      'flex-1 flex items-center justify-center rounded-2xl border px-4 py-3 cursor-pointer transition-all',
+                      form.reproductiveStatus === 'intact'
+                        ? 'border-sky-400 bg-sky-50 text-sky-700 ring-2 ring-sky-200'
+                        : 'border-slate-200 bg-slate-50/50 text-slate-700 hover:bg-slate-100',
+                    ].join(' ')}
+                  >
+                    <input
+                      type="radio"
+                      name="reproductiveStatus"
+                      value="intact"
+                      checked={form.reproductiveStatus === 'intact'}
+                      onChange={update}
+                      className="sr-only"
+                    />
+                    <span className="font-medium">No (Intact)</span>
+                  </label>
+                  <label
+                    className={[
+                      'flex-1 flex items-center justify-center rounded-2xl border px-4 py-3 cursor-pointer transition-all',
+                      form.reproductiveStatus === 'spayed'
+                        ? 'border-sky-400 bg-sky-50 text-sky-700 ring-2 ring-sky-200'
+                        : 'border-slate-200 bg-slate-50/50 text-slate-700 hover:bg-slate-100',
+                    ].join(' ')}
+                  >
+                    <input
+                      type="radio"
+                      name="reproductiveStatus"
+                      value="spayed"
+                      checked={form.reproductiveStatus === 'spayed'}
+                      onChange={update}
+                      className="sr-only"
+                    />
+                    <span className="font-medium">Yes (Spayed)</span>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {showHeatDateField && (
+              <div className="rounded-2xl bg-pink-50 border border-pink-100 p-4">
+                <label htmlFor="lastHeatDate" className="block text-sm font-semibold text-pink-800 mb-2">
+                  Last heat cycle date <span className="text-pink-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  id="lastHeatDate"
+                  name="lastHeatDate"
+                  type="date"
+                  value={form.lastHeatDate}
+                  onChange={update}
+                  className="w-full rounded-xl border border-pink-200 bg-white px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-transparent"
+                />
+                <p className="text-xs text-pink-600 mt-2">
+                  We&apos;ll help you track and predict future cycles for better care.
+                </p>
+              </div>
+            )}
+          </>
+        )}
 
         <button
           type="submit"

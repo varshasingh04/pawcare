@@ -40,7 +40,32 @@ export const api = {
   getPets: () => request('/pets'),
   getPet: (id) => request(`/pets/${id}`),
   createPet: (body) => request('/pets', { method: 'POST', body: JSON.stringify(body) }),
-  getReminders: () => request('/reminders'),
+  updatePet: (id, body) => request(`/pets/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
+  deletePet: (id) => request(`/pets/${id}`, { method: 'DELETE' }),
+  logHeatCycle: (petId, body) =>
+    request(`/pets/${petId}/heat-cycle`, { method: 'POST', body: JSON.stringify(body) }),
+  getVaccinations: (petId) => request(`/vaccinations/${petId}`),
+  getVaccination: (petId, recordId) => request(`/vaccinations/${petId}/${recordId}`),
+  addVaccination: (petId, body) =>
+    request(`/vaccinations/${petId}`, { method: 'POST', body: JSON.stringify(body) }),
+  deleteVaccination: (petId, recordId) =>
+    request(`/vaccinations/${petId}/${recordId}`, { method: 'DELETE' }),
+  getLostReport: (petId) => request(`/lost-pets/${petId}`),
+  markPetLost: (petId, body) =>
+    request(`/lost-pets/${petId}`, { method: 'POST', body: JSON.stringify(body) }),
+  updateLostReport: (petId, body) =>
+    request(`/lost-pets/${petId}`, { method: 'PUT', body: JSON.stringify(body) }),
+  markPetFound: (petId, notes) =>
+    request(`/lost-pets/${petId}/found`, { method: 'POST', body: JSON.stringify({ notes }) }),
+  reportSighting: (petId, body) =>
+    request(`/lost-pets/${petId}/sighting`, { method: 'POST', body: JSON.stringify(body) }),
+  deleteLostReport: (petId) => request(`/lost-pets/${petId}`, { method: 'DELETE' }),
+  getReminders: (status) => request(`/reminders${status ? `?status=${status}` : ''}`),
+  createReminder: (body) => request('/reminders', { method: 'POST', body: JSON.stringify(body) }),
+  updateReminder: (id, body) =>
+    request(`/reminders/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
+  completeReminder: (id) => request(`/reminders/${id}/complete`, { method: 'PUT' }),
+  deleteReminder: (id) => request(`/reminders/${id}`, { method: 'DELETE' }),
   getVets: (q) => request(`/vets${q ? `?q=${encodeURIComponent(q)}` : ''}`),
   getEmergencyVets: () => request('/vets/emergency'),
   createAppointment: (body) =>
@@ -48,4 +73,10 @@ export const api = {
   /** Public — no login. Returns pet summary + owner contact for QR scan. */
   getPublicPetByShareToken: (shareToken) =>
     request(`/public/pet/${encodeURIComponent(shareToken)}`),
+  checkSymptoms: (body) => request('/ai/symptom-checker', { method: 'POST', body: JSON.stringify(body) }),
+  getNutritionAdvice: (body) => request('/ai/nutrition-advisor', { method: 'POST', body: JSON.stringify(body) }),
+  getHelpPosts: () => request('/help-posts'),
+  createHelpPost: (body) => request('/help-posts', { method: 'POST', body: JSON.stringify(body) }),
+  resolveHelpPost: (id) => request(`/help-posts/${id}/resolve`, { method: 'PUT' }),
+  deleteHelpPost: (id) => request(`/help-posts/${id}`, { method: 'DELETE' }),
 }

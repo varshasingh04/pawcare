@@ -5,8 +5,10 @@ import 'leaflet/dist/leaflet.css'
 import MarkerClusterGroup from 'react-leaflet-markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import { Plus, X, MapPin, Locate } from 'lucide-react'
+import { api } from '../api'
 
-const FALLBACK_CENTER = { lat: 40.7128, lng: -74.006 } // NYC-ish fallback
+const FALLBACK_CENTER = { lat: 28.6139, lng: 77.209 } // New Delhi
 const DEFAULT_ZOOM = 13
 
 function toRad(deg) {
@@ -126,68 +128,68 @@ function buildMockMarkers(center) {
     }
   }
 
-  // A small mix: vets, grooming, normal help posts, and urgent help posts.
+  // New Delhi locations - vets, grooming, help posts
   return [
     mk(
       'help-1',
       'help',
       'Dog not eating',
-      'My dog refused food for 24 hours. Any suggestions or nearby urgent help?',
-      'Near Oak St & 3rd Ave',
-      2.1,
+      'My Labrador refused food for 24 hours. Any suggestions or nearby vet?',
+      'Near Connaught Place, New Delhi',
+      1.5,
       { urgent: false },
     ),
     mk(
       'help-2',
       'help',
       'Cat vomiting repeatedly',
-      'My cat is vomiting and seems weak. Looking for urgent guidance.',
-      'Downtown Market (approx.)',
-      1.3,
+      'My Persian cat is vomiting and seems weak. Need urgent guidance.',
+      'Lajpat Nagar Market',
+      2.1,
       { urgent: true },
     ),
     mk(
       'help-3',
       'help',
       'Lost small dog',
-      'Brown/white terrier lost near the park. Please contact if you see him.',
-      'Riverside Park entrance',
-      3.6,
+      'Brown Pomeranian lost near the park. Please contact if seen.',
+      'Lodhi Garden entrance',
+      2.8,
       { urgent: false },
     ),
     mk(
       'svc-1',
       'service',
-      'BrightPaws Animal Hospital',
-      'Open today. Experienced vets for urgent and routine visits.',
-      '12 Maple Ave, Downtown',
-      2.0,
+      'Dr. Pets Veterinary Clinic',
+      'Open today. Experienced vets for all pets. 24/7 emergency.',
+      'Defence Colony, New Delhi',
+      1.8,
       { serviceCategory: 'vet' },
     ),
     mk(
       'svc-2',
       'service',
-      'Sunrise Pet Wellness (Grooming)',
-      'Gentle grooming for dogs and cats. Walk-ins available.',
-      '400 Oak St',
-      2.7,
+      'Happy Tails Pet Spa & Grooming',
+      'Professional grooming for dogs and cats. Walk-ins welcome.',
+      'Greater Kailash-1, New Delhi',
+      2.5,
       { serviceCategory: 'grooming' },
     ),
     mk(
       'svc-3',
       'service',
-      'Harbor Veterinary Center',
-      '24/7 emergency services and pet health consultations.',
-      '2 Harbor View',
-      4.1,
+      'Max Pet Hospital',
+      '24/7 emergency services, surgeries, and vaccinations.',
+      'Saket, New Delhi',
+      3.2,
       { serviceCategory: 'vet' },
     ),
     mk(
       'help-4',
       'help',
-      'Puppy limping',
-      'Puppy limping after playing. Looking for a nearby vet to check today.',
-      'Central Library area',
+      'Puppy limping after walk',
+      'My puppy started limping after morning walk. Need vet recommendation.',
+      'Hauz Khas Village',
       1.9,
       { urgent: false },
     ),
@@ -195,10 +197,37 @@ function buildMockMarkers(center) {
       'help-5',
       'help',
       '🚨 Found injured kitten',
-      'Found a kitten with a possible wound. Need urgent help / vet referral.',
-      'Eastside Station (approx.)',
-      2.4,
+      'Found a kitten with wound near metro station. Need urgent help!',
+      'Rajiv Chowk Metro Station',
+      0.8,
       { urgent: true },
+    ),
+    mk(
+      'svc-4',
+      'service',
+      'Paws & Claws Vet Care',
+      'Affordable pet care, vaccinations, and health checkups.',
+      'Karol Bagh, New Delhi',
+      2.3,
+      { serviceCategory: 'vet' },
+    ),
+    mk(
+      'svc-5',
+      'service',
+      'Fluffy Friends Grooming',
+      'Premium grooming services. Appointment recommended.',
+      'Vasant Kunj, New Delhi',
+      4.5,
+      { serviceCategory: 'grooming' },
+    ),
+    mk(
+      'help-6',
+      'help',
+      'Need foster home for puppies',
+      'Found 3 abandoned puppies. Looking for temporary foster homes.',
+      'Nehru Place, New Delhi',
+      3.1,
+      { urgent: false },
     ),
   ]
 }
@@ -215,6 +244,15 @@ function MapFocusOnSelection({ selected, zoom = 15 }) {
   return null
 }
 
+const CATEGORIES = [
+  { value: 'lost_pet', label: 'Lost Pet' },
+  { value: 'found_pet', label: 'Found Pet' },
+  { value: 'medical_help', label: 'Medical Help' },
+  { value: 'adoption', label: 'Adoption' },
+  { value: 'foster', label: 'Foster Needed' },
+  { value: 'general', label: 'General Help' },
+]
+
 export function MapBasedPetHelp() {
   const { status, pos } = useGeolocation()
   const [center, setCenter] = useState(FALLBACK_CENTER)
@@ -225,6 +263,33 @@ export function MapBasedPetHelp() {
   const [showVets, setShowVets] = useState(true)
   const [showHelpPosts, setShowHelpPosts] = useState(true)
   const [urgentOnly, setUrgentOnly] = useState(false)
+
+  const [helpPosts, setHelpPosts] = useState([])
+  const [showPostModal, setShowPostModal] = useState(false)
+  const [postForm, setPostForm] = useState({
+    title: '',
+    description: '',
+    category: 'general',
+    urgent: false,
+    address: '',
+    contactPhone: '',
+    petType: '',
+  })
+  const [posting, setPosting] = useState(false)
+  const [gettingLocation, setGettingLocation] = useState(false)
+
+  useEffect(() => {
+    loadHelpPosts()
+  }, [])
+
+  const loadHelpPosts = async () => {
+    try {
+      const posts = await api.getHelpPosts()
+      setHelpPosts(posts)
+    } catch {
+      console.error('Failed to load help posts')
+    }
+  }
 
   useEffect(() => {
     if (status === 'success' && pos) {
@@ -240,12 +305,33 @@ export function MapBasedPetHelp() {
   }, [status, pos])
 
   const markers = useMemo(() => {
-    return buildMockMarkers(center).map((m) => {
+    const mockMarkers = buildMockMarkers(center).map((m) => {
       const distanceKm = haversineDistanceKm(center, m.coords)
       const distanceKmRounded = Math.round(distanceKm * 10) / 10
       return { ...m, distanceKm: distanceKmRounded }
     })
-  }, [center])
+
+    const realPosts = helpPosts.map((p) => {
+      const coords = { lat: p.location.lat, lng: p.location.lng }
+      const distanceKm = haversineDistanceKm(center, coords)
+      return {
+        id: p._id,
+        kind: 'help',
+        urgent: p.urgent,
+        title: p.title,
+        description: p.description,
+        address: p.location.address,
+        coords,
+        distanceKm: Math.round(distanceKm * 10) / 10,
+        category: p.category,
+        contactPhone: p.contactPhone,
+        ownerName: p.owner?.name,
+        isReal: true,
+      }
+    })
+
+    return [...realPosts, ...mockMarkers]
+  }, [center, helpPosts])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -280,6 +366,65 @@ export function MapBasedPetHelp() {
 
   const handleSelect = (id) => {
     setSelectedId(id)
+  }
+
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) return
+    setGettingLocation(true)
+    navigator.geolocation.getCurrentPosition(
+      (p) => {
+        setPostForm((f) => ({
+          ...f,
+          lat: p.coords.latitude,
+          lng: p.coords.longitude,
+        }))
+        setGettingLocation(false)
+      },
+      () => {
+        setGettingLocation(false)
+        alert('Could not get your location')
+      },
+      { enableHighAccuracy: true, timeout: 10000 },
+    )
+  }
+
+  const handlePostSubmit = async (e) => {
+    e.preventDefault()
+    if (!postForm.title.trim() || !postForm.description.trim() || !postForm.address.trim()) {
+      alert('Please fill title, description and address')
+      return
+    }
+
+    const lat = postForm.lat || center.lat
+    const lng = postForm.lng || center.lng
+
+    setPosting(true)
+    try {
+      await api.createHelpPost({
+        title: postForm.title,
+        description: postForm.description,
+        category: postForm.category,
+        urgent: postForm.urgent,
+        location: { lat, lng, address: postForm.address },
+        contactPhone: postForm.contactPhone,
+        petType: postForm.petType,
+      })
+      setShowPostModal(false)
+      setPostForm({
+        title: '',
+        description: '',
+        category: 'general',
+        urgent: false,
+        address: '',
+        contactPhone: '',
+        petType: '',
+      })
+      loadHelpPosts()
+    } catch (err) {
+      alert(err.message || 'Failed to post. Please login first.')
+    } finally {
+      setPosting(false)
+    }
   }
 
   // Leaflet + React-Leaflet: when the user selects from the list we also focus on it.
@@ -322,6 +467,14 @@ export function MapBasedPetHelp() {
               aria-pressed={urgentOnly}
             >
               Urgent Only
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowPostModal(true)}
+              className="px-4 py-2 rounded-full text-sm font-semibold bg-sky-500 text-white hover:bg-sky-600 transition-colors flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Post Help Request
             </button>
           </div>
 
@@ -495,11 +648,143 @@ export function MapBasedPetHelp() {
                 <div className="text-xs text-slate-500 mt-2">
                   Location: <span className="text-slate-700 font-medium">{details.address}</span>
                 </div>
+                {details.contactPhone && (
+                  <div className="text-xs text-slate-500 mt-1">
+                    Contact: <span className="text-slate-700 font-medium">{details.contactPhone}</span>
+                  </div>
+                )}
               </div>
             )}
           </div>
         </aside>
       </div>
+
+      {showPostModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-900">Post Help Request</h3>
+              <button
+                type="button"
+                onClick={() => setShowPostModal(false)}
+                className="p-2 rounded-full hover:bg-slate-100 transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handlePostSubmit} className="p-5 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Title *</label>
+                <input
+                  type="text"
+                  value={postForm.title}
+                  onChange={(e) => setPostForm((f) => ({ ...f, title: e.target.value }))}
+                  placeholder="e.g., Lost dog near park"
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Description *</label>
+                <textarea
+                  value={postForm.description}
+                  onChange={(e) => setPostForm((f) => ({ ...f, description: e.target.value }))}
+                  placeholder="Describe your situation in detail..."
+                  rows={3}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300 resize-none"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Category</label>
+                  <select
+                    value={postForm.category}
+                    onChange={(e) => setPostForm((f) => ({ ...f, category: e.target.value }))}
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
+                  >
+                    {CATEGORIES.map((c) => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Pet Type</label>
+                  <input
+                    type="text"
+                    value={postForm.petType}
+                    onChange={(e) => setPostForm((f) => ({ ...f, petType: e.target.value }))}
+                    placeholder="e.g., Dog, Cat"
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Address *</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={postForm.address}
+                    onChange={(e) => setPostForm((f) => ({ ...f, address: e.target.value }))}
+                    placeholder="e.g., Near Connaught Place"
+                    className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={getCurrentLocation}
+                    disabled={gettingLocation}
+                    className="p-3 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                    title="Use current location"
+                  >
+                    <Locate className={`w-5 h-5 text-slate-600 ${gettingLocation ? 'animate-pulse' : ''}`} />
+                  </button>
+                </div>
+                {postForm.lat && (
+                  <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
+                    <MapPin className="w-3 h-3" /> Location captured
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Contact Phone</label>
+                <input
+                  type="tel"
+                  value={postForm.contactPhone}
+                  onChange={(e) => setPostForm((f) => ({ ...f, contactPhone: e.target.value }))}
+                  placeholder="Optional"
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
+                />
+              </div>
+
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={postForm.urgent}
+                  onChange={(e) => setPostForm((f) => ({ ...f, urgent: e.target.checked }))}
+                  className="w-5 h-5 rounded border-slate-300 text-red-500 focus:ring-red-200"
+                />
+                <span className="text-sm font-medium text-slate-700">
+                  Mark as <span className="text-red-600 font-semibold">URGENT</span>
+                </span>
+              </label>
+
+              <button
+                type="submit"
+                disabled={posting}
+                className="w-full py-3 rounded-xl bg-sky-500 text-white font-semibold hover:bg-sky-600 transition-colors disabled:opacity-50"
+              >
+                {posting ? 'Posting...' : 'Post Help Request'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

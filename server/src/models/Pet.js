@@ -18,6 +18,15 @@ const scheduleSchema = new mongoose.Schema(
   { _id: false },
 )
 
+const heatCycleSchema = new mongoose.Schema(
+  {
+    startDate: { type: Date, required: true },
+    endDate: { type: Date },
+    notes: { type: String, trim: true },
+  },
+  { _id: true, timestamps: true },
+)
+
 const petSchema = new mongoose.Schema(
   {
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -29,6 +38,9 @@ const petSchema = new mongoose.Schema(
     weight: { type: Number, required: true },
     breed: String,
     photoEmoji: { type: String, default: '🐾' },
+    gender: { type: String, enum: ['male', 'female', 'unknown'], default: 'unknown' },
+    reproductiveStatus: { type: String, enum: ['intact', 'spayed', 'neutered', 'unknown'], default: 'unknown' },
+    heatCycles: { type: [heatCycleSchema], default: [] },
     medicalHistory: { type: [historySchema], default: [] },
     schedules: { type: [scheduleSchema], default: [] },
   },
