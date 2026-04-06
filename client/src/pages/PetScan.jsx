@@ -359,11 +359,11 @@ export function PetScan() {
             </div>
 
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-wide text-slate-400 mb-3 flex items-center gap-2">
+              <h2 className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-3 flex items-center gap-2">
                 <User className="w-4 h-4" />
                 Owner
               </h2>
-              <p className="font-display text-xl font-bold text-slate-900">{owner.name}</p>
+              <p className="font-display text-xl font-bold text-gray-900">{owner.name}</p>
             </div>
 
             <ul className="space-y-3">
@@ -371,14 +371,14 @@ export function PetScan() {
                 <li>
                   <a
                     href={`tel:${owner.phone.replace(/\s/g, '')}`}
-                    className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-3 text-slate-800 hover:border-sky-200 hover:bg-sky-50/50 transition-colors"
+                    className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 hover:border-sky-300 hover:bg-sky-50 transition-colors"
                   >
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-mint-100 text-emerald-700">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
                       <Phone className="w-5 h-5" />
                     </span>
                     <div>
-                      <p className="text-xs font-semibold text-slate-500">Phone</p>
-                      <p className="font-medium">{owner.phone}</p>
+                      <p className="text-xs font-semibold text-gray-500">Phone</p>
+                      <p className="font-medium text-gray-900">{owner.phone}</p>
                     </div>
                   </a>
                 </li>
@@ -387,20 +387,20 @@ export function PetScan() {
                 <li>
                   <a
                     href={`mailto:${owner.email}`}
-                    className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-3 text-slate-800 hover:border-sky-200 hover:bg-sky-50/50 transition-colors"
+                    className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 hover:border-sky-300 hover:bg-sky-50 transition-colors"
                   >
                     <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100 text-sky-700">
                       <Mail className="w-5 h-5" />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-xs font-semibold text-slate-500">Email</p>
-                      <p className="font-medium truncate">{owner.email}</p>
+                      <p className="text-xs font-semibold text-gray-500">Email</p>
+                      <p className="font-medium text-gray-900 truncate">{owner.email}</p>
                     </div>
                   </a>
                 </li>
               )}
               {!owner.phone && !owner.email && (
-                <li className="text-sm text-slate-500">No contact details on file.</li>
+                <li className="text-sm text-gray-600 text-center py-4">No contact details on file.</li>
               )}
             </ul>
           </div>
