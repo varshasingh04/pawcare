@@ -43,6 +43,22 @@ export function AuthProvider({ children }) {
     setUser(null)
   }, [])
 
+  const refreshUser = useCallback(async () => {
+    try {
+      const userData = await api.me()
+      setUser(userData)
+      return userData
+    } catch (err) {
+      console.error('Failed to refresh user:', err)
+      return null
+    }
+  }, [])
+
+  const logout = useCallback(() => {
+    clearToken()
+    setUser(null)
+  }, [])
+
   const value = useMemo(
     () => ({
       user,
@@ -50,9 +66,11 @@ export function AuthProvider({ children }) {
       login,
       register,
       logoutLocal,
+      logout,
+      refreshUser,
       isAuthenticated: !!user,
     }),
-    [user, loading, login, register, logoutLocal],
+    [user, loading, login, register, logoutLocal, logout, refreshUser],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

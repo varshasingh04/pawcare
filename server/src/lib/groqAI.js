@@ -6,12 +6,49 @@ let groq = null
 
 function getClient() {
   if (!apiKey) {
-    throw new Error('GROQ_API_KEY is not configured')
+    throw new Error('GROQ_API_KEY is not configured. Please add it to your .env file.')
   }
   if (!groq) {
     groq = new Groq({ apiKey })
   }
   return groq
+}
+
+const MODELS = [
+  'llama-3.1-8b-instant',
+  'llama3-70b-8192',
+  'mixtral-8x7b-32768',
+  'gemma2-9b-it',
+]
+
+async function tryCompletion(client, messages, maxTokens) {
+  let lastError = null
+  
+  for (const model of MODELS) {
+    try {
+      console.log(`Trying model: ${model}`)
+      const completion = await client.chat.completions.create({
+        model,
+        messages,
+        temperature: 0.7,
+        max_tokens: maxTokens,
+      })
+      console.log(`Model ${model} succeeded`)
+      return completion.choices[0]?.message?.content
+    } catch (err) {
+      console.error(`Model ${model} failed:`, err.message || err)
+      lastError = err
+      
+      if (err.message?.includes('rate_limit') || err.status === 429) {
+        console.log('Rate limit hit, trying next model...')
+        continue
+      }
+    }
+  }
+  
+  const errorMsg = lastError?.message || 'All AI models failed'
+  console.error('All models failed. Last error:', errorMsg)
+  throw new Error(errorMsg)
 }
 
 export async function analyzeSymptoms(petType, petAge, symptoms, additionalInfo) {
@@ -33,14 +70,13 @@ End with: "Consult a vet for proper diagnosis."
 
 Keep total response under 200 words.`
 
-  const completion = await client.chat.completions.create({
-    model: 'llama-3.1-8b-instant',
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.7,
-    max_tokens: 400,
-  })
+  const result = await tryCompletion(
+    client,
+    [{ role: 'user', content: prompt }],
+    400
+  )
 
-  return completion.choices[0]?.message?.content || 'Unable to analyze symptoms.'
+  return result || 'Unable to analyze symptoms.'
 }
 
 export async function getNutritionAdvice(petType, breed, age, weight, activityLevel, healthConditions) {
@@ -63,12 +99,11 @@ End with: "Consult vet for specific dietary needs."
 
 Keep total response under 150 words.`
 
-  const completion = await client.chat.completions.create({
-    model: 'llama-3.1-8b-instant',
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.7,
-    max_tokens: 350,
-  })
+  const result = await tryCompletion(
+    client,
+    [{ role: 'user', content: prompt }],
+    350
+  )
 
-  return completion.choices[0]?.message?.content || 'Unable to provide nutrition advice.'
+  return result || 'Unable to provide nutrition advice.'
 }

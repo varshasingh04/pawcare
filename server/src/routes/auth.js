@@ -71,7 +71,7 @@ authRoutes.post('/logout', noopLogout)
 
 authRoutes.get('/me', authenticate, async (req, res, next) => {
   try {
-    const user = await User.findById(req.userId).select('email name phone').lean()
+    const user = await User.findById(req.userId).select('email name phone notifications').lean()
     if (!user) {
       return res.status(401).json({ message: 'User not found' })
     }
@@ -80,6 +80,81 @@ authRoutes.get('/me', authenticate, async (req, res, next) => {
       email: user.email,
       name: user.name,
       phone: user.phone && String(user.phone).trim() ? user.phone.trim() : null,
+      notifications: user.notifications || {},
+    })
+  } catch (e) {
+    next(e)
+  }
+})
+
+authRoutes.put('/profile', authenticate, async (req, res, next) => {
+  try {
+    const { name, email, phone, notifications } = req.body
+    const updates = {}
+    
+    if (name !== undefined) {
+      updates.name = name.trim()
+    }
+    if (phone !== undefined) {
+      updates.phone = phone.trim()
+    }
+    if (email !== undefined) {
+      const normalizedEmail = email.toLowerCase().trim()
+      const existing = await User.findOne({ email: normalizedEmail, _id: { $ne: req.userId } })
+      if (existing) {
+        return res.status(409).json({ message: 'Email already in use' })
+      }
+      updates.email = normalizedEmail
+    }
+    if (notifications !== undefined) {
+      updates.notifications = notifications
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { $set: updates },
+      { new: true, runValidators: true }
+    ).select('email name phone notifications')
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    res.json({
+      id: user._id,
+      email: user.email,
+      name: user.name,
+      phone: user.phone || null,
+      notifications: user.notifications || {},
+    })
+  } catch (e) {
+    next(e)
+  }
+})
+
+authRoutes.get('/export-data', authenticate, async (req, res, next) => {
+  try {
+    const { Pet } = await import('../models/Pet.js')
+    const { Reminder } = await import('../models/Reminder.js')
+    const { Appointment } = await import('../models/Appointment.js')
+
+    const user = await User.findById(req.userId).select('-passwordHash').lean()
+    const pets = await Pet.find({ owner: req.userId }).lean()
+    const reminders = await Reminder.find({ user: req.userId }).lean()
+    const appointments = await Appointment.find({ user: req.userId }).lean()
+
+    res.json({
+      exportedAt: new Date().toISOString(),
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        phone: user.phone || null,
+        createdAt: user.createdAt,
+      },
+      pets,
+      reminders,
+      appointments,
     })
   } catch (e) {
     next(e)

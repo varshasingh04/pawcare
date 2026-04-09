@@ -6,6 +6,11 @@ const userSchema = new mongoose.Schema(
     passwordHash: { type: String, required: true },
     name: { type: String, required: true, trim: true },
     phone: { type: String, trim: true, default: '' },
+    notifications: {
+      emailReminders: { type: Boolean, default: true },
+      vaccineAlerts: { type: Boolean, default: true },
+      appointmentReminders: { type: Boolean, default: true },
+    },
   },
   { timestamps: true },
 )
