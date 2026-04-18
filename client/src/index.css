@@ -73,6 +73,9 @@ html.dark body {
   .action-card p, .action-card span {
     color: #111827 !important;
   }
+  .action-card h1, .action-card h2, .action-card h3 {
+    color: #0f172a !important;
+  }
   .action-card .text-gray-600 {
     color: #4b5563 !important;
   }
@@ -86,9 +89,17 @@ html.dark body {
   html.dark .action-card p, html.dark .action-card span {
     color: #ffffff !important;
   }
+  .dark .action-card h1, .dark .action-card h2, .dark .action-card h3,
+  html.dark .action-card h1, html.dark .action-card h2, html.dark .action-card h3 {
+    color: #ffffff !important;
+  }
   .dark .action-card .text-gray-600,
   html.dark .action-card .text-gray-600 {
     color: #9ca3af !important;
+  }
+  .dark .action-card .text-gray-500,
+  html.dark .action-card .text-gray-500 {
+    color: #94a3b8 !important;
   }
 
   /* Search input */
@@ -433,6 +444,20 @@ html.dark .text-slate-700 { color: #f1f5f9 !important; }
 html.dark .text-slate-600 { color: #e2e8f0 !important; }
 .dark .text-slate-500,
 html.dark .text-slate-500 { color: #cbd5e1 !important; }
+
+/* DARK MODE - also cover text-gray-* equivalents (Tailwind gray scale) */
+.dark .text-gray-900,
+html.dark .text-gray-900 { color: #ffffff !important; }
+.dark .text-gray-800,
+html.dark .text-gray-800 { color: #f3f4f6 !important; }
+.dark .text-gray-700,
+html.dark .text-gray-700 { color: #e5e7eb !important; }
+.dark .text-gray-600,
+html.dark .text-gray-600 { color: #d1d5db !important; }
+.dark .text-gray-500,
+html.dark .text-gray-500 { color: #9ca3af !important; }
+.dark .text-gray-400,
+html.dark .text-gray-400 { color: #9ca3af !important; }
 
 /* Links - Teal color */
 a.text-sky-600 { color: #0d9488 !important; }

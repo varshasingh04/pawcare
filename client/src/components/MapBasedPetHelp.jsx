@@ -432,7 +432,7 @@ export function MapBasedPetHelp() {
 
   return (
     <div className="w-full">
-      <div className="bg-white/70 backdrop-blur-sm border border-slate-100/80 shadow-sm rounded-2xl p-4 mb-4">
+      <div className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-slate-100/80 dark:border-slate-700/80 shadow-sm rounded-2xl p-4 mb-4">
         <div className="flex flex-col lg:flex-row lg:items-end gap-3">
           <div className="flex flex-wrap gap-2">
             <button
@@ -440,7 +440,9 @@ export function MapBasedPetHelp() {
               onClick={() => setShowVets((v) => !v)}
               className={[
                 'px-4 py-2 rounded-full text-sm font-semibold ring-1 transition-colors',
-                showVets ? 'bg-green-50 text-emerald-800 ring-green-100' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50',
+                showVets
+                  ? 'bg-green-50 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200 ring-green-100 dark:ring-emerald-800'
+                  : 'bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-200 ring-slate-200 dark:ring-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600',
               ].join(' ')}
               aria-pressed={showVets}
             >
@@ -451,7 +453,9 @@ export function MapBasedPetHelp() {
               onClick={() => setShowHelpPosts((v) => !v)}
               className={[
                 'px-4 py-2 rounded-full text-sm font-semibold ring-1 transition-colors',
-                showHelpPosts ? 'bg-sky-50 text-sky-800 ring-sky-100' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50',
+                showHelpPosts
+                  ? 'bg-sky-50 dark:bg-sky-900/40 text-sky-800 dark:text-sky-200 ring-sky-100 dark:ring-sky-800'
+                  : 'bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-200 ring-slate-200 dark:ring-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600',
               ].join(' ')}
               aria-pressed={showHelpPosts}
             >
@@ -462,7 +466,9 @@ export function MapBasedPetHelp() {
               onClick={() => setUrgentOnly((v) => !v)}
               className={[
                 'px-4 py-2 rounded-full text-sm font-semibold ring-1 transition-colors',
-                urgentOnly ? 'bg-red-50 text-red-700 ring-red-100' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50',
+                urgentOnly
+                  ? 'bg-red-50 dark:bg-red-900/40 text-red-700 dark:text-red-200 ring-red-100 dark:ring-red-800'
+                  : 'bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-200 ring-slate-200 dark:ring-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600',
               ].join(' ')}
               aria-pressed={urgentOnly}
             >
@@ -479,19 +485,19 @@ export function MapBasedPetHelp() {
           </div>
 
           <div className="flex-1">
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Search</label>
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Search</label>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search nearby services or help..."
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
+              className="w-full rounded-2xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-400 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
             />
           </div>
         </div>
 
         {(status === 'loading' || geoError) && (
           <div className="mt-3">
-            <div className="text-sm text-slate-600">
+            <div className="text-sm text-slate-600 dark:text-slate-300">
               {status === 'loading' ? 'Getting your location…' : geoError}
             </div>
           </div>
@@ -500,7 +506,7 @@ export function MapBasedPetHelp() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
-          <div className="relative w-full h-[70vh] md:h-[75vh] rounded-2xl overflow-hidden border border-slate-100 shadow-sm bg-white">
+          <div className="relative w-full h-[70vh] md:h-[75vh] rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
             <MapContainer
               center={[center.lat, center.lng]}
               zoom={DEFAULT_ZOOM}
@@ -570,11 +576,11 @@ export function MapBasedPetHelp() {
         </div>
 
         <aside className="lg:col-span-1">
-          <div className="bg-white/70 backdrop-blur-sm border border-slate-100/80 shadow-sm rounded-2xl p-4 h-[70vh] md:h-[75vh] flex flex-col">
+          <div className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-slate-100/80 dark:border-slate-700/80 shadow-sm rounded-2xl p-4 h-[70vh] md:h-[75vh] flex flex-col">
             <div className="flex items-center justify-between gap-3 mb-3">
               <div>
-                <div className="text-sm font-semibold text-slate-800">Nearby</div>
-                <div className="text-xs text-slate-500">
+                <div className="text-sm font-semibold text-slate-800 dark:text-slate-100">Nearby</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">
                   {filtered.length} results
                 </div>
               </div>
@@ -582,7 +588,7 @@ export function MapBasedPetHelp() {
 
             <div className="overflow-auto flex-1 pr-1 space-y-2">
               {filtered.length === 0 && (
-                <div className="text-sm text-slate-600 p-3 bg-slate-50 rounded-xl">
+                <div className="text-sm text-slate-600 dark:text-slate-300 p-3 bg-slate-50 dark:bg-slate-700 rounded-xl">
                   No results match your filters.
                 </div>
               )}
@@ -600,10 +606,10 @@ export function MapBasedPetHelp() {
 
                 const badgeClass =
                   m.kind === 'service'
-                    ? 'bg-emerald-50 text-emerald-800 ring-emerald-100'
+                    ? 'bg-emerald-50 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200 ring-emerald-100 dark:ring-emerald-800'
                     : m.urgent
-                      ? 'bg-red-50 text-red-700 ring-red-100'
-                      : 'bg-sky-50 text-sky-800 ring-sky-100'
+                      ? 'bg-red-50 dark:bg-red-900/40 text-red-700 dark:text-red-200 ring-red-100 dark:ring-red-800'
+                      : 'bg-sky-50 dark:bg-sky-900/40 text-sky-800 dark:text-sky-200 ring-sky-100 dark:ring-sky-800'
 
                 return (
                   <button
@@ -613,14 +619,14 @@ export function MapBasedPetHelp() {
                     className={[
                       'w-full text-left rounded-2xl border p-3 transition-all',
                       isSelected
-                        ? 'border-sky-200 bg-sky-50/80 shadow-sm ring-1 ring-sky-100'
-                        : 'border-slate-100 bg-white hover:bg-slate-50',
+                        ? 'border-sky-200 dark:border-sky-600 bg-sky-50/80 dark:bg-sky-900/30 shadow-sm ring-1 ring-sky-100 dark:ring-sky-700'
+                        : 'border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700',
                     ].join(' ')}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <div className="text-sm font-bold text-slate-900 truncate">{m.title}</div>
-                        <div className="text-xs text-slate-600 mt-1 line-clamp-2">{m.description}</div>
+                        <div className="text-sm font-bold text-slate-900 dark:text-white truncate">{m.title}</div>
+                        <div className="text-xs text-slate-600 dark:text-slate-300 mt-1 line-clamp-2">{m.description}</div>
                       </div>
                       <div
                         className={[
@@ -632,9 +638,9 @@ export function MapBasedPetHelp() {
                       </div>
                     </div>
 
-                    <div className="text-xs text-slate-500 mt-2 flex items-center justify-between gap-2">
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center justify-between gap-2">
                       <span className="truncate">{m.address}</span>
-                      <span className="font-semibold text-slate-700 shrink-0">{m.distanceKm} km</span>
+                      <span className="font-semibold text-slate-700 dark:text-slate-200 shrink-0">{m.distanceKm} km</span>
                     </div>
                   </button>
                 )
@@ -642,15 +648,15 @@ export function MapBasedPetHelp() {
             </div>
 
             {details && (
-              <div className="mt-3 border-t border-slate-100 pt-3">
-                <div className="text-sm font-semibold text-slate-900">{details.title}</div>
-                <div className="text-sm text-slate-600 mt-1">{details.description}</div>
-                <div className="text-xs text-slate-500 mt-2">
-                  Location: <span className="text-slate-700 font-medium">{details.address}</span>
+              <div className="mt-3 border-t border-slate-100 dark:border-slate-700 pt-3">
+                <div className="text-sm font-semibold text-slate-900 dark:text-white">{details.title}</div>
+                <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">{details.description}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                  Location: <span className="text-slate-700 dark:text-slate-200 font-medium">{details.address}</span>
                 </div>
                 {details.contactPhone && (
-                  <div className="text-xs text-slate-500 mt-1">
-                    Contact: <span className="text-slate-700 font-medium">{details.contactPhone}</span>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Contact: <span className="text-slate-700 dark:text-slate-200 font-medium">{details.contactPhone}</span>
                   </div>
                 )}
               </div>
@@ -661,50 +667,50 @@ export function MapBasedPetHelp() {
 
       {showPostModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-5 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">Post Help Request</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Post Help Request</h3>
               <button
                 type="button"
                 onClick={() => setShowPostModal(false)}
-                className="p-2 rounded-full hover:bg-slate-100 transition-colors"
+                className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
-                <X className="w-5 h-5 text-slate-500" />
+                <X className="w-5 h-5 text-slate-500 dark:text-slate-300" />
               </button>
             </div>
 
             <form onSubmit={handlePostSubmit} className="p-5 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Title *</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Title *</label>
                 <input
                   type="text"
                   value={postForm.title}
                   onChange={(e) => setPostForm((f) => ({ ...f, title: e.target.value }))}
                   placeholder="e.g., Lost dog near park"
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-400 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Description *</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Description *</label>
                 <textarea
                   value={postForm.description}
                   onChange={(e) => setPostForm((f) => ({ ...f, description: e.target.value }))}
                   placeholder="Describe your situation in detail..."
                   rows={3}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300 resize-none"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-400 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300 resize-none"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Category</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Category</label>
                   <select
                     value={postForm.category}
                     onChange={(e) => setPostForm((f) => ({ ...f, category: e.target.value }))}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
                   >
                     {CATEGORIES.map((c) => (
                       <option key={c.value} value={c.value}>{c.label}</option>
@@ -712,53 +718,53 @@ export function MapBasedPetHelp() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Pet Type</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Pet Type</label>
                   <input
                     type="text"
                     value={postForm.petType}
                     onChange={(e) => setPostForm((f) => ({ ...f, petType: e.target.value }))}
                     placeholder="e.g., Dog, Cat"
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-400 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Address *</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Address *</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={postForm.address}
                     onChange={(e) => setPostForm((f) => ({ ...f, address: e.target.value }))}
                     placeholder="e.g., Near Connaught Place"
-                    className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
+                    className="flex-1 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-400 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
                     required
                   />
                   <button
                     type="button"
                     onClick={getCurrentLocation}
                     disabled={gettingLocation}
-                    className="p-3 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                    className="p-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
                     title="Use current location"
                   >
-                    <Locate className={`w-5 h-5 text-slate-600 ${gettingLocation ? 'animate-pulse' : ''}`} />
+                    <Locate className={`w-5 h-5 text-slate-600 dark:text-slate-200 ${gettingLocation ? 'animate-pulse' : ''}`} />
                   </button>
                 </div>
                 {postForm.lat && (
-                  <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1">
                     <MapPin className="w-3 h-3" /> Location captured
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Contact Phone</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Contact Phone</label>
                 <input
                   type="tel"
                   value={postForm.contactPhone}
                   onChange={(e) => setPostForm((f) => ({ ...f, contactPhone: e.target.value }))}
                   placeholder="Optional"
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-400 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300"
                 />
               </div>
 
@@ -767,10 +773,10 @@ export function MapBasedPetHelp() {
                   type="checkbox"
                   checked={postForm.urgent}
                   onChange={(e) => setPostForm((f) => ({ ...f, urgent: e.target.checked }))}
-                  className="w-5 h-5 rounded border-slate-300 text-red-500 focus:ring-red-200"
+                  className="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-red-500 focus:ring-red-200"
                 />
-                <span className="text-sm font-medium text-slate-700">
-                  Mark as <span className="text-red-600 font-semibold">URGENT</span>
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                  Mark as <span className="text-red-600 dark:text-red-400 font-semibold">URGENT</span>
                 </span>
               </label>
 

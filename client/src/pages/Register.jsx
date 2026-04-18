@@ -6,10 +6,10 @@ import { validateRegister } from '../validation/authForms.js'
 
 function inputClass(invalid) {
   return [
-    'w-full rounded-2xl border bg-slate-50/50 px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 transition-shadow',
+    'w-full rounded-2xl border bg-slate-50/50 dark:bg-slate-900/60 px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-shadow',
     invalid
-      ? 'border-red-300 focus:ring-red-400 focus:border-transparent'
-      : 'border-slate-200 focus:ring-sky-400 focus:border-transparent',
+      ? 'border-red-300 dark:border-red-700 focus:ring-red-400 focus:border-transparent'
+      : 'border-slate-200 dark:border-slate-700 focus:ring-sky-400 focus:border-transparent',
   ].join(' ')
 }
 
@@ -72,14 +72,14 @@ export function Register() {
               <PawPrint className="w-6 h-6" strokeWidth={2.2} />
             </span>
           </Link>
-          <h1 className="font-display text-3xl font-bold text-slate-900 tracking-tight">Create account</h1>
-          <p className="mt-2 text-slate-600">Join PawCare to track your pets&apos; health in one place.</p>
+          <h1 className="font-display text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Create account</h1>
+          <p className="mt-2 text-slate-600 dark:text-slate-300">Join PawCare to track your pets&apos; health in one place.</p>
         </div>
 
         <form
           noValidate
           onSubmit={handleSubmit}
-          className="rounded-3xl bg-white border border-slate-100/90 p-8 shadow-card space-y-5"
+          className="rounded-3xl bg-white dark:bg-slate-800 border border-slate-100/90 dark:border-slate-700 p-8 shadow-card space-y-5"
         >
           {error && (
             <div className="rounded-2xl bg-red-50 text-red-700 text-sm px-4 py-3 border border-red-100" role="alert">
@@ -88,7 +88,7 @@ export function Register() {
           )}
 
           <div>
-            <label htmlFor="reg-name" className="block text-sm font-semibold text-slate-700 mb-2">
+            <label htmlFor="reg-name" className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
               Name
             </label>
             <input
@@ -119,7 +119,7 @@ export function Register() {
           </div>
 
           <div>
-            <label htmlFor="reg-email" className="block text-sm font-semibold text-slate-700 mb-2">
+            <label htmlFor="reg-email" className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
               Email
             </label>
             <input
@@ -150,7 +150,7 @@ export function Register() {
           </div>
 
           <div>
-            <label htmlFor="reg-password" className="block text-sm font-semibold text-slate-700 mb-2">
+            <label htmlFor="reg-password" className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
               Password
             </label>
             <input
@@ -174,7 +174,7 @@ export function Register() {
                 fieldErrors.password ? 'reg-password-hint reg-password-error' : 'reg-password-hint'
               }
             />
-            <p id="reg-password-hint" className="mt-1 text-xs text-slate-500">
+            <p id="reg-password-hint" className="mt-1 text-xs text-slate-500 dark:text-slate-400">
               At least 6 characters, max 128.
             </p>
             {fieldErrors.password && (
@@ -192,9 +192,9 @@ export function Register() {
             {submitting ? 'Creating…' : 'Sign up'}
           </button>
 
-          <p className="text-center text-sm text-slate-600">
+          <p className="text-center text-sm text-slate-600 dark:text-slate-300">
             Already have an account?{' '}
-            <Link to="/login" className="font-semibold text-sky-600 hover:text-sky-700">
+            <Link to="/login" className="font-semibold text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300">
               Sign in
             </Link>
           </p>
